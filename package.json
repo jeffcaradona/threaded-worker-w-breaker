@@ -22,6 +22,7 @@
   "homepage": "https://github.com/jeffcaradona/threaded-worker-w-breaker#readme",
   "devDependencies": {
     "chai": "^5.1.2",
-    "mocha": "^11.0.1"
+    "mocha": "^11.0.1",
+    "c8":"^10.1.3",
   }
 }
