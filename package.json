@@ -2,6 +2,7 @@
   "name": "threaded-worker-w-breaker",
   "version": "0.0.1",
   "description": "A ChatGPT assisted Multi-Threaded Node.js application with a Circuit Breaker",
+  "type": "module",
   "main": "app.js",
   "directories": {
     "test": "test"
