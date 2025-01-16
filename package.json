@@ -5,7 +5,7 @@
   "type": "module",
   "main": "app.js",
   "directories": {
-    "test": "test"
+    "test": "mocha"
   },
   "scripts": {
     "test": "mocha"
