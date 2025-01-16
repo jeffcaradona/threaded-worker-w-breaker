@@ -1,0 +1,22 @@
+{
+  "name": "threaded-worker-w-breaker",
+  "version": "0.0.1",
+  "description": "A ChatGPT assisted Multi-Threaded Node.js application with a Circuit Breaker",
+  "main": "app.js",
+  "directories": {
+    "test": "test"
+  },
+  "scripts": {
+    "test": "mocha"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/jeffcaradona/threaded-worker-w-breaker.git"
+  },
+  "author": "Jeff Caradona",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/jeffcaradona/threaded-worker-w-breaker/issues"
+  },
+  "homepage": "https://github.com/jeffcaradona/threaded-worker-w-breaker#readme"
+}
