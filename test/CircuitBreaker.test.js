@@ -9,8 +9,11 @@ describe('CircuitBreaker', () => {
   let sharedArray;
 
   beforeEach(() => {
-    const sharedBuffer = new SharedArrayBuffer(1024);
+    // Create a shared buffer with a size of 3 options.
+    const sharedBuffer = new SharedArrayBuffer(Int32Array.BYTES_PER_ELEMENT * Object.keys(CircuitBreakerKeys).length);
+    // Create a typed array (Int32Array) that uses the shared buffer
     sharedArray = new Int32Array(sharedBuffer);
+    // Instantiate a CircuitBreaker with the shared array, threshold of 3, and timeout of 1000ms
     circuitBreaker = new CircuitBreaker(sharedArray, 3, 1000);
   });
 
