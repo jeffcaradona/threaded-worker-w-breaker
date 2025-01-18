@@ -97,11 +97,11 @@ describe("CircuitBreaker", () => {
           Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE)
         ).to.equal(CircuitBreakerStates.OPEN);
       
-        console.log("State after failure:", Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE));
+        //console.log("State after failure:", Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE));
       
         await new Promise((resolve) => setTimeout(resolve, 150));
       
-        console.log("State after reset timeout:", Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE));
+        //console.log("State after reset timeout:", Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE));
       
         expect(
           Atomics.load(circuitBreaker.sharedArray, CircuitBreakerKeys.STATE)
