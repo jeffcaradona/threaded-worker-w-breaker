@@ -5,10 +5,11 @@
   "type": "module",
   "main": "app.js",
   "directories": {
-    "test": "mocha"
+    "test": "mocha --require esm"
   },
   "scripts": {
-    "test": "mocha"
+    "test": "mocha",
+    "coverage": "c8 --reporter=html --reporter=text mocha"
   },
   "repository": {
     "type": "git",
@@ -25,5 +26,13 @@
     "chai": "^5.1.2",
     "mocha": "^11.0.1",
     "supertest": "^7.0.0"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "node-schedule": "^2.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
   }
+
 }
