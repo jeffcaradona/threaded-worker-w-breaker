@@ -38,7 +38,6 @@ describe('CircuitBreaker', () => {
     } catch (error) {
       expect(error.message).to.equal('failure');
     }
-    console.log('Failure count:', Atomics.load(sharedArray, CircuitBreakerKeys.FAILURE_COUNT));
     expect(Atomics.load(sharedArray, CircuitBreakerKeys.FAILURE_COUNT)).to.equal(1);
   });
 
@@ -52,8 +51,7 @@ describe('CircuitBreaker', () => {
     } catch (error) {}
     try {
       await circuitBreaker.execute(task);
-    } catch (error) {}
-    console.log('Circuit state:', Atomics.load(sharedArray, CircuitBreakerKeys.STATE));
+    } catch (error) {}    
     expect(Atomics.load(sharedArray, CircuitBreakerKeys.STATE)).to.equal(CircuitBreakerStates.OPEN);
   });
 
@@ -61,8 +59,7 @@ describe('CircuitBreaker', () => {
     this.timeout(4000); // Increase timeout to ensure state transition is captured
     Atomics.store(sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.OPEN);
     setTimeout(() => {
-      circuitBreaker.transitionToHalfOpen();
-      console.log('Circuit state after timeout:', Atomics.load(sharedArray, CircuitBreakerKeys.STATE));
+      circuitBreaker.transitionToHalfOpen();     
       expect(Atomics.load(sharedArray, CircuitBreakerKeys.STATE)).to.equal(CircuitBreakerStates.HALF_OPEN);
       done();
     }, 3000); // Increase delay to ensure state transition is captured
@@ -90,5 +87,23 @@ describe('CircuitBreaker', () => {
   it('should set the failureThreshold and resetTimeout correctly', () => {
     expect(circuitBreaker.failureThreshold).to.equal(3);
     expect(circuitBreaker.resetTimeout).to.equal(1000);
+  });
+
+  it('should execute openFallback when the circuit is open', async () => {
+    const openFallback = async () => 'fallback result';
+    circuitBreaker = new CircuitBreaker(sharedArray, 3, 1000, openFallback);
+    Atomics.store(sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.OPEN);
+    const task = async () => 'success';
+    const result = await circuitBreaker.execute(task);
+    expect(result).to.equal('fallback result');
+  });
+
+  it('should execute failureFallback when the task fails', async () => {
+    const failureFallback = async () => 'fallback result';
+    circuitBreaker = new CircuitBreaker(sharedArray, 3, 1000, null, failureFallback);
+    const task = async () => { throw new Error('failure'); };
+    const result = await circuitBreaker.execute(task);
+    expect(result).to.equal('fallback result');
+    expect(Atomics.load(sharedArray, CircuitBreakerKeys.FAILURE_COUNT)).to.equal(1);
   });
 });

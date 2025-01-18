@@ -11,10 +11,13 @@ export const CircuitBreakerStates = {
 };
 
 class CircuitBreaker {
-  constructor(sharedArray, failureThreshold, resetTimeout) {
+  constructor(sharedArray, failureThreshold, resetTimeout, openFallback = null, failureFallback = null) {
     this.sharedArray = sharedArray;
     this.failureThreshold = failureThreshold;
     this.resetTimeout = resetTimeout;
+    this.openFallback = openFallback;
+    this.failureFallback = failureFallback;
+    
     Atomics.store(
       this.sharedArray,
       CircuitBreakerKeys.STATE,
@@ -26,7 +29,10 @@ class CircuitBreaker {
   async execute(task) {
     const state = Atomics.load(this.sharedArray, CircuitBreakerKeys.STATE);
     if (state === CircuitBreakerStates.OPEN) {
-      throw new Error("Circuit is open");
+      if (this.openFallback) {
+        return this.openFallback();
+      }
+      throw new Error("Circuit is open"); 
     }
 
     try {
@@ -35,6 +41,9 @@ class CircuitBreaker {
       return result;
     } catch (error) {
       this.onFailure();
+      if (this.failureFallback) {
+        return this.failureFallback();
+      }
       throw error;
     }
   }
