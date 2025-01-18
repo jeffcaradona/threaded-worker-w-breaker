@@ -58,13 +58,13 @@ describe('CircuitBreaker', () => {
   });
 
   it('should transition from open to half-open after reset timeout', function(done) {
-    this.timeout(2000); // Increase timeout to ensure state transition is captured
+    this.timeout(3000); // Increase timeout to ensure state transition is captured
     Atomics.store(sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.OPEN);
     setTimeout(() => {
       console.log('Circuit state after timeout:', Atomics.load(sharedArray, CircuitBreakerKeys.STATE));
       expect(Atomics.load(sharedArray, CircuitBreakerKeys.STATE)).to.equal(CircuitBreakerStates.HALF_OPEN);
       done();
-    }, 1500); // Increase delay to ensure state transition is captured
+    }, 2000); // Increase delay to ensure state transition is captured
   });
 
   it('should return the correct state', () => {

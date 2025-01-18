@@ -52,6 +52,7 @@ class CircuitBreaker {
 
   getState() {
     const state = Atomics.load(this.sharedArray, CircuitBreakerKeys.STATE);
+    console.log('Current state:', state);
     return Object.keys(CircuitBreakerStates).find(
       (key) => CircuitBreakerStates[key] === state
     );
