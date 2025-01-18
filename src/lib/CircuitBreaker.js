@@ -15,7 +15,11 @@ class CircuitBreaker {
     this.sharedArray = sharedArray;
     this.failureThreshold = failureThreshold;
     this.resetTimeout = resetTimeout;
-    Atomics.store(this.sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.CLOSED);
+    Atomics.store(
+      this.sharedArray,
+      CircuitBreakerKeys.STATE,
+      CircuitBreakerStates.CLOSED
+    );
     Atomics.store(this.sharedArray, CircuitBreakerKeys.FAILURE_COUNT, 0);
   }
 
@@ -36,23 +40,43 @@ class CircuitBreaker {
   }
 
   onFailure() {
-    const failureCount = Atomics.add(this.sharedArray, CircuitBreakerKeys.FAILURE_COUNT, 1) + 1;
-    console.log('Failure count in onFailure:', failureCount);
-    Atomics.store(this.sharedArray, CircuitBreakerKeys.LAST_FAILURE_TIME, Date.now());
+    const failureCount =
+      Atomics.add(this.sharedArray, CircuitBreakerKeys.FAILURE_COUNT, 1) + 1;
+
+    Atomics.store(
+      this.sharedArray,
+      CircuitBreakerKeys.LAST_FAILURE_TIME,
+      Date.now()
+    );
 
     if (failureCount >= this.failureThreshold) {
-      Atomics.store(this.sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.OPEN);
-      console.log('Circuit state set to OPEN');
+      Atomics.store(
+        this.sharedArray,
+        CircuitBreakerKeys.STATE,
+        CircuitBreakerStates.OPEN
+      );
+
       setTimeout(() => {
-        Atomics.store(this.sharedArray, CircuitBreakerKeys.STATE, CircuitBreakerStates.HALF_OPEN);
-        console.log('Circuit state set to HALF_OPEN');
-      }, this.resetTimeout);
+        Atomics.store(
+          this.sharedArray,
+          CircuitBreakerKeys.STATE,
+          CircuitBreakerStates.HALF_OPEN
+        );
+      }, this.resetTimeout + 1000); // Adjusted timeout to ensure state transition
     }
+  }
+
+  transitionToHalfOpen() {
+    Atomics.store(
+      this.sharedArray,
+      CircuitBreakerKeys.STATE,
+      CircuitBreakerStates.HALF_OPEN
+    );
   }
 
   getState() {
     const state = Atomics.load(this.sharedArray, CircuitBreakerKeys.STATE);
-    console.log('Current state:', state);
+
     return Object.keys(CircuitBreakerStates).find(
       (key) => CircuitBreakerStates[key] === state
     );
